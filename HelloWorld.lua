@@ -19,6 +19,6 @@ function HelloWorld(msg)
   message("Hello, Universe!"); -- Simple PopUp Box
   
   if str then
-  	message("You passed " .. msg);
+  	print("You passed " .. msg);
   end
 end
