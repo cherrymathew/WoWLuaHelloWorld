@@ -5,9 +5,6 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
   <Frame name="HelloWorldFrame" parent="UIParent">
   	<Anchors>
   		<Anchor point="LEFT" relativePoint="CENTER">
-  		 <Offset>
-  		 	<AbsDimension x="200" y="0" />
-  		 </Offset>
   		</Anchor>
   	</Anchors>
   	<Size>
@@ -15,22 +12,6 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
   	</Size>
   	<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
   	title="true" edgeFile="Interface\DialogFrame\UI-DialogBox-Border">
-  		<TileSize>
-  			<AbsValue val="32" />
-  		</TileSize>
-  		<EdgeSize>
-  			<AbsValue val="32" />
-  		</EdgeSize>
-  		<BackgroundInsets>
-  			<AbsInset left="11" right="12" top="12" bottom="11" />
-  		</BackgroundInsets>
   	</Backdrop>
-    <Scripts>
-			<OnLoad>
-				 <!-- HelloWorld(); -->
-			</OnLoad>
-    </Scripts>
   </Frame>
 </Ui>
-
-
