@@ -24,9 +24,10 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
   		<BackgroundInsets>
   			<AbsInset left="11" right="12" top="12" bottom="11" />
   		</BackgroundInsets>
+  	</Backdrop>
     <Scripts>
 			<OnLoad>
-				 HelloWorld();
+				 <!-- HelloWorld(); -->
 			</OnLoad>
     </Scripts>
   </Frame>
