@@ -1,17 +1,17 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
   <Script File="HelloWorld.lua"/> <!-- The Script File -->
   <Frame name="HelloWorld" parent="UIParent">
-  	<Anchors>
-  		<Anchor point="LEFT" relativePoint="CENTER">
-  		</Anchor>
-  	</Anchors>
-  	<Size>
-  		<AbsDimension x="384" y="350" />
-  	</Size>
-  	<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-  	title="true" edgeFile="Interface\DialogFrame\UI-DialogBox-Border">
-  	</Backdrop>
+    <Anchors>
+      <Anchor point="LEFT" relativePoint="CENTER">
+      </Anchor>
+    </Anchors>
+    <Size>
+      <AbsDimension x="384" y="350" />
+    </Size>
+    <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+	      title="true" edgeFile="Interface\DialogFrame\UI-DialogBox-Border">
+    </Backdrop>
   </Frame>
 </Ui>
