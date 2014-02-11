@@ -18,7 +18,17 @@ function HelloWorld(msg)
   -- print("Hello, Universe!"); -- Simple Console Message
   message("Hello, Universe!"); -- Simple PopUp Box
   
-  if str then
+  -- Controls the display of the frame based on the parameter passed to the
+  -- slash command
+  if(str == "show") then
+  	HelloWorldForm:Show();
+  else if(str == "hide") then
+  		HelloWorldForm:Hide();
+  	end
+  end
+  
+  -- Display a message if the string passed is not empty
+  if (str ~= "") then
   	print("You passed " .. msg);
   end
 end
