@@ -11,12 +11,107 @@ SlashCmdList["HELLO_WORLD_SHOW"] = function (msg)
 end
 
 --
+-- References used for the current framework
+-- Button Generator - http://wowprogramming.com/snippets/LOL_CLASS_31
+-- Quantity Box - http://eu.battle.net/wow/en/forum/topic/1622897526
+--
+local scale = 1
+local prevpos = false
+
+--
+-- Generates a button containing the icon of the tooltip data captured
+-- and also a Quantity Box to enter quantities
+--
+-- TODO:
+-- 1. Implement method to capture duplicate items when multiple clicked
+-- 2. Better alignment of generated rows of Buttons and Boxes
+-- 3. Table to store and retrieve Data after logging off
+-- 4. Implement basic trading logic (yet to be split into micro tasks)
+--
+local function generateButton(itemIcon, itemID) 
+   local button = CreateFrame("Button", itemID.."-button", UIParent, "ActionButtonTemplate")
+   local editBox = CreateFrame("EditBox", itemID.."-editBox", UIParent, "InputBoxTemplate")
+   
+   button:SetScale(scale)
+   editBox:SetWidth(35)
+   editBox:SetHeight(50)
+   
+   if not prevpos then 
+   	button:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",13,-13)
+   	editBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",65,-6.5)
+   else 
+   	button:SetPoint("TOP",prevpos,"BOTTOM",0,-4)
+   	editBox:SetPoint("TOP",prevposBox,"BOTTOM",0,2)
+   end
+
+   _G[button:GetName().."Icon"]:SetTexture(itemIcon)
+   _G[button:GetName().."Icon"]:SetTexCoord(0, 1, 0, 1)   
+	
+	button:SetScript("OnClick", function()
+			 SendChatMessage(itemID,"SAY")
+	end )
+	
+	editBox:SetScript("OnChar", function (self,char) 
+				print(char); 
+	end );
+	editBox:Show()
+	
+	prevpos = itemID.."-button"
+	prevposBox = itemID.."-editBox"
+end
+
+--
+-- Captures the data from the tooltip
+--
+local function showTooltip(self, linkData)
+	local linkType, itemID = string.split(":", linkData)
+	if(linkType == 'item') then
+		itemIcon = GetItemIcon(itemID);
+		generateButton(itemIcon, itemID);
+		print(itemIcon);
+	end
+	--print(...)
+end
+
+--
+-- Not used a stub function
+--
+local function hideTooltip(...)
+--	print(...)
+end
+
+--
+-- Initializes all the events and handlers for a given frame
+--
+local function setOrHookHandler(frame, event, handler)
+	if frame:GetScript(event) then -- Checks if the event has a handler
+		frame:HookScript(event, handler) -- if not we hook out handler
+	else
+		frame:SetScript(event, handler) -- else set our function has the handler
+	end
+end
+
+-- 
+-- Initializes the hooks and handlers for capturing information
+-- from an Item Hyperlink
+--
+local function hoverToolTip()
+	-- Creates copy of "General Chat Frame"
+	local frame = getglobal("ChatFrame"..1);
+	print(frame)
+	if frame then
+		setOrHookHandler(frame,"onHyperlinkClick", showTooltip)
+		setOrHookHandler(frame,"OnHyperlinkLeave", hideTooltip)
+	end
+end	
+
+--
 -- A simple function
 --
 function HelloWorld(msg) 
 	local str = str or msg;
   -- print("Hello, Universe!"); -- Simple Console Message
-  message("Hello, Universe!"); -- Simple PopUp Box
+  -- message("Hello, Universe!"); -- Simple PopUp Box
   
   -- Controls the display of the frame based on the parameter passed to the
   -- slash command
@@ -31,4 +126,10 @@ function HelloWorld(msg)
   if (str ~= "") then
   	print("You passed " .. msg);
   end
+  
+  -- Initialize the Tooltip Information Capture
+  hoverToolTip()
+  
+  -- Sets the backdrop to be transparent
+  HelloWorldForm:SetBackdrop(StaticPopup1:GetBackdrop())
 end
