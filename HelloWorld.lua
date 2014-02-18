@@ -17,6 +17,7 @@ end
 --
 local scale = 1
 local prevpos = false
+local itemlist = {};
 
 --
 -- Generates a button containing the icon of the tooltip data captured
@@ -29,6 +30,12 @@ local prevpos = false
 -- 4. Implement basic trading logic (yet to be split into micro tasks)
 --
 local function generateButton(itemIcon, itemID) 
+
+-- Reject existing items.      
+   if itemlist[itemID] == true then
+      return;
+   end
+
    local button = CreateFrame("Button", itemID.."-button", UIParent, "ActionButtonTemplate")
    local editBox = CreateFrame("EditBox", itemID.."-editBox", UIParent, "InputBoxTemplate")
    
@@ -36,7 +43,7 @@ local function generateButton(itemIcon, itemID)
    editBox:SetWidth(35)
    editBox:SetHeight(50)
    
-   if not prevpos then 
+   if not prevpos then
    	button:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",13,-13)
    	editBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",65,-6.5)
    else 
@@ -58,6 +65,7 @@ local function generateButton(itemIcon, itemID)
 	
 	prevpos = itemID.."-button"
 	prevposBox = itemID.."-editBox"
+	itemlist[itemID] = true
 end
 
 --
