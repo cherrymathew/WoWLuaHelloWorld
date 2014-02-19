@@ -36,18 +36,17 @@ end
 -- and also a Quantity Box to enter quantities
 --
 -- TODO:
--- 1. Implement method to capture duplicate items when multiple clicked
--- 2. Better alignment of generated rows of Buttons and Boxes
--- 3. Table to store and retrieve Data after logging off
--- 4. Implement basic trading logic (yet to be split into micro tasks)
+-- 1. Better alignment of generated rows of Buttons and Boxes
+-- 2. Table to store and retrieve Data after logging off
+-- 3. Implement basic trading logic (yet to be split into micro tasks)
 --
 local function generateButton(itemIcon, itemID) 
    if itemlist[itemID] == true then
       return;
    end
 
-   local button = CreateFrame("Button", itemID.."-button", UIParent, "ActionButtonTemplate")
-   local editBox = CreateFrame("EditBox", itemID.."-editBox", UIParent, "InputBoxTemplate")
+   local button = CreateFrame("Button", itemID.."-button", HelloWorldForm, "ActionButtonTemplate")
+   local editBox = CreateFrame("EditBox", itemID.."-editBox", HelloWorldForm, "InputBoxTemplate")
    
    button:SetScale(scale)
    editBox:SetWidth(35)
