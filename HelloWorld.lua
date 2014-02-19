@@ -17,6 +17,7 @@ end
 --
 local scale = 1
 local prevpos = false
+local itemlist = {};
 
 --
 -- Advertise the Item into Trade Chat (Channel 2), when the Icon is clicked
@@ -41,8 +42,12 @@ end
 -- 4. Implement basic trading logic (yet to be split into micro tasks)
 --
 local function generateButton(itemIcon, itemID) 
-   local button = CreateFrame("Button", itemID.."-button", HelloWorldForm, "ActionButtonTemplate")
-   local editBox = CreateFrame("EditBox", itemID.."-editBox", HelloWorldForm, "InputBoxTemplate")
+   if itemlist[itemID] == true then
+      return;
+   end
+
+   local button = CreateFrame("Button", itemID.."-button", UIParent, "ActionButtonTemplate")
+   local editBox = CreateFrame("EditBox", itemID.."-editBox", UIParent, "InputBoxTemplate")
    
    button:SetScale(scale)
    editBox:SetWidth(35)
@@ -51,7 +56,7 @@ local function generateButton(itemIcon, itemID)
    editBox:SetNumeric(true)
    editBox:SetNumber(1)
    
-   if not prevpos then 
+   if not prevpos then
    	button:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",13,-13)
    	editBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",65,-6.5)
    else 
@@ -75,6 +80,7 @@ local function generateButton(itemIcon, itemID)
 	
 	prevpos = itemID.."-button"
 	prevposBox = itemID.."-editBox"
+	itemlist[itemID] = true
 end
 
 --
