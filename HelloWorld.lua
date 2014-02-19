@@ -19,6 +19,18 @@ local scale = 1
 local prevpos = false
 
 --
+-- Advertise the Item into Trade Chat (Channel 2), when the Icon is clicked
+--
+local function advertiseItem(itemID)
+	local index, name = GetChannelName(2) -- It finds Trade is a channel at index 2
+	local quantity = _G[itemID.."-editBox"]:GetNumber()
+	if (index ~= nil) then 
+		local itemName, itemLink = GetItemInfo(itemID)
+		SendChatMessage("WTS "..itemLink.." x "..quantity , "CHANNEL", nil, index);
+	end
+end
+
+--
 -- Generates a button containing the icon of the tooltip data captured
 -- and also a Quantity Box to enter quantities
 --
@@ -29,12 +41,15 @@ local prevpos = false
 -- 4. Implement basic trading logic (yet to be split into micro tasks)
 --
 local function generateButton(itemIcon, itemID) 
-   local button = CreateFrame("Button", itemID.."-button", UIParent, "ActionButtonTemplate")
-   local editBox = CreateFrame("EditBox", itemID.."-editBox", UIParent, "InputBoxTemplate")
+   local button = CreateFrame("Button", itemID.."-button", HelloWorldForm, "ActionButtonTemplate")
+   local editBox = CreateFrame("EditBox", itemID.."-editBox", HelloWorldForm, "InputBoxTemplate")
    
    button:SetScale(scale)
    editBox:SetWidth(35)
    editBox:SetHeight(50)
+   editBox:SetAutoFocus(false)
+   editBox:SetNumeric(true)
+   editBox:SetNumber(1)
    
    if not prevpos then 
    	button:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",13,-13)
@@ -47,12 +62,14 @@ local function generateButton(itemIcon, itemID)
    _G[button:GetName().."Icon"]:SetTexture(itemIcon)
    _G[button:GetName().."Icon"]:SetTexCoord(0, 1, 0, 1)   
 	
-	button:SetScript("OnClick", function()
-			 SendChatMessage(itemID,"SAY")
-	end )
+--	button:SetScript("OnClick", function()
+--			 SendChatMessage(itemID,"SAY")
+--	end )
 	
-	editBox:SetScript("OnChar", function (self,char) 
-				print(char); 
+	button:SetScript("OnClick", function() advertiseItem(itemID) end)
+
+	editBox:SetScript("OnEnterPressed", function (self) 
+				editBox:ClearFocus(); -- clears focus from editbox, (unlocks key bindings, so pressing W makes your character go forward.
 	end );
 	editBox:Show()
 	
@@ -65,6 +82,8 @@ end
 --
 local function showTooltip(self, linkData)
 	local linkType, itemID = string.split(":", linkData)
+	print(linkType)
+	print(linkData)
 	if(linkType == 'item') then
 		itemIcon = GetItemIcon(itemID);
 		generateButton(itemIcon, itemID);
