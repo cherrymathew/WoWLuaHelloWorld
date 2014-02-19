@@ -88,12 +88,9 @@ end
 --
 local function showTooltip(self, linkData)
 	local linkType, itemID = string.split(":", linkData)
-	print(linkType)
-	print(linkData)
 	if(linkType == 'item') then
 		itemIcon = GetItemIcon(itemID);
 		generateButton(itemIcon, itemID);
-		print(itemIcon);
 	end
 	--print(...)
 end
