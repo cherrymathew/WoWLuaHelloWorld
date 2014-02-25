@@ -124,6 +124,27 @@ local function generateButton(itemIcon, itemID)
 end
 
 --
+-- Stub code for the trade chat parser
+--
+local function tradeChatParser(self, event, ...)
+	local message, author = ...
+	local channelName = select(4, ...)
+	local channelNo = select(8, ...)
+	print(author.." "..message.." "..channelName.." "..channelNo)
+end
+
+--
+-- Initializes the hooks and callbacks for watching tradechat, the callback
+-- is a parser to extract potential trading information
+--
+local function tradeChatWatcher()
+	local frame = CreateFrame("Frame");
+	
+	frame:RegisterEvent("CHAT_MSG_CHANNEL")
+	frame:SetScript("OnEvent", tradeChatParser)
+end
+
+--
 -- Captures the data from the tooltip
 --
 local function showTooltip(self, linkData)
@@ -132,7 +153,6 @@ local function showTooltip(self, linkData)
 		itemIcon = GetItemIcon(itemID);
 		generateButton(itemIcon, itemID);
 	end
-	--print(...)
 end
 
 --
@@ -194,6 +214,8 @@ function HelloWorld(msg)
   
   -- Sets the backdrop to be transparent
   HelloWorldForm:SetBackdrop(StaticPopup1:GetBackdrop())
+  
+  tradeChatWatcher()
 end
 
 
