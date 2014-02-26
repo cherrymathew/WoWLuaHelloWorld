@@ -18,8 +18,10 @@ end
 --
 local scale = 1
 local prevpos = false
-local itemlist = {};
-
+local itemList = {};
+local timerFrame = nil;
+local advertiseInterval = 5.0;
+local timeSinceLastAdvertisement = 0
 local quantityTypes = {
 	"Individual", -- ID 1
 	"Stacks", -- ID 2
@@ -36,6 +38,47 @@ local function advertiseItem(itemID, quantity, quantityType)
 		local itemName, itemLink = GetItemInfo(itemID)
 		SendChatMessage("WTS "..itemLink.." x "..quantity..quantityString, "CHANNEL", nil, index);
 	end
+end
+
+--
+-- Avertise a list of items, each item will be displayed one after another
+-- in the chat window in Trade Channel
+--
+local function advertiseItems(itemList)
+	for itemID in pairs(itemList) do
+		local editBox = itemID.."-editBox"
+		local dropdownBox = itemID.."-dropdownBox"
+		advertiseItem(itemID, _G[editBox]:GetNumber(), UIDropDownMenu_GetSelectedID(_G[dropdownBox]))
+	end
+	
+  if (timerFrame == nil) then
+  	timerFrame = CreateFrame("frame")
+  	advertiseInterval = 5.0;
+  	timerFrame:SetScript("OnUpdate", function(self,elapsed) advertiseItemsPeriodic(self,elapsed,itemList) end)
+  end
+end
+
+--
+-- OnUpdate Callback for a timer frame, which advertises the items in the trade
+-- channel in a fixed periodic interval
+-- 
+function advertiseItemsPeriodic(self, elapsed, itemList)
+	timeSinceLastAdvertisement = timeSinceLastAdvertisement + elapsed; 	
+
+	if(itemList ~= nil) then
+		if (timeSinceLastAdvertisement > advertiseInterval) then
+			advertiseItems(itemList)
+			timeSinceLastAdvertisement = 0;
+		end
+	end
+end
+
+--
+-- Stub function to stop advertisement
+-- Currently just sets a huge time interval to prevent advertisement spam
+--
+function stopAdvertise()
+	advertiseInterval = 50000000000.0;
 end
 
 --
@@ -69,7 +112,7 @@ end
 -- 3. Implement basic trading logic (yet to be split into micro tasks)
 --
 local function generateButton(itemIcon, itemID) 
-	if itemlist[itemID] == true then
+	if itemList[itemID] == true then
 		return;
 	end
 	
@@ -87,7 +130,6 @@ local function generateButton(itemIcon, itemID)
 	editBox:SetNumber(1)
 	
 	dropdownBox:ClearAllPoints()
-	dropdownBox:SetPoint("CENTER", 0, 0)
 	dropdownBox:Show()
 
 	UIDropDownMenu_Initialize(dropdownBox, initializeDropdownBox)
@@ -97,13 +139,14 @@ local function generateButton(itemIcon, itemID)
 	UIDropDownMenu_JustifyText(dropdownBox, "LEFT")
 
    if not prevpos then
-   	button:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",13,-13)
-   	editBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",65,-6.5)
-   	dropdownBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",130,-6.5)
+   	button:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",17,-30)
+   	editBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",73,-23.5)
+   	dropdownBox:SetPoint("TOPLEFT",HelloWorldForm,"TOPLEFT",130,-30)
    else 
    	button:SetPoint("TOP",prevpos,"BOTTOM",0,-4)
-   	editBox:SetPoint("TOP",prevposBox,"BOTTOM",0,2)
-   	dropdownBox:SetPoint("TOP",prevposDropdownBox,"BOTTOM",0,2)
+   	--editBox:SetPoint("TOP",prevposBox,"BOTTOM",0, 2)
+   	editBox:SetPoint("TOPLEFT",prevpos,"TOPLEFT", 55, -29)
+   	dropdownBox:SetPoint("TOP",prevposDropdownBox,"BOTTOM",0,-8)
    end
 
    _G[button:GetName().."Icon"]:SetTexture(itemIcon)
@@ -120,7 +163,10 @@ local function generateButton(itemIcon, itemID)
 	prevpos = itemID.."-button"
 	prevposBox = itemID.."-editBox"
 	prevposDropdownBox = itemID.."-dropdownBox"
-	itemlist[itemID] = true
+	itemList[itemID] = true
+	
+	advertiseButton:SetScript("OnClick", function() advertiseItems(itemList) end)
+	stopAdvertiseButton:SetScript("OnClick", stopAdvertise) 
 end
 
 --
@@ -130,7 +176,7 @@ local function tradeChatParser(self, event, ...)
 	local message, author = ...
 	local channelName = select(4, ...)
 	local channelNo = select(8, ...)
-	print(author.." "..message.." "..channelName.." "..channelNo)
+	--print(author.." "..message.." "..channelName.." "..channelNo)
 end
 
 --
@@ -180,7 +226,6 @@ end
 local function hoverToolTip()
 	-- Creates copy of "General Chat Frame"
 	local frame = getglobal("ChatFrame"..1);
-	print(frame)
 	if frame then
 		setOrHookHandler(frame,"onHyperlinkClick", showTooltip)
 		setOrHookHandler(frame,"OnHyperlinkLeave", hideTooltip)
@@ -215,8 +260,8 @@ function HelloWorld(msg)
   -- Sets the backdrop to be transparent
   HelloWorldForm:SetBackdrop(StaticPopup1:GetBackdrop())
   
+  --- Initialize the trade chat watcher
   tradeChatWatcher()
 end
-
 
 
